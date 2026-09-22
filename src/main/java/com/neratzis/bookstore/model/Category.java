@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,6 +33,9 @@ public class Category {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_category_id")
     private Category parentCategory;
+
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private Set<Product> products = new HashSet<>();
 
     public void addSubCategory(Category category){
         this.subCategories.add(category);
