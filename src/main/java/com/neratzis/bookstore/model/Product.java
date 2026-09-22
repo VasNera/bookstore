@@ -29,8 +29,6 @@ public abstract class Product extends AbstractEntity{
     @Column(nullable = false,unique = true)
     private String sku;
 
-    private String brand;
-
     private String dimensions;
 
     @Column(nullable = false)
