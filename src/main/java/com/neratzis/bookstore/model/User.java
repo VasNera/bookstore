@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -47,6 +49,22 @@ public class User extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_favourites",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private Set<Product> favourites = new HashSet<>();
+
+    public void addFavourite(Product product){
+        favourites.add(product);
+        product.getUsers().add(this);
+    }
+
+    public void removeFavourite(Product product){
+        favourites.remove(product);
+        product.getUsers().remove(this);
+    }
 
 
     @Override

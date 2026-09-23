@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -52,6 +54,9 @@ public abstract class Product extends AbstractEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @ManyToMany(mappedBy = "favourites", fetch = FetchType.LAZY)
+    private Set<User> users = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
