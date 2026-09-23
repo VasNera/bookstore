@@ -56,6 +56,9 @@ public class User extends AbstractEntity {
     inverseJoinColumns = @JoinColumn(name = "product_id"))
     private Set<Product> favourites = new HashSet<>();
 
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private Cart cart;
+
     public void addFavourite(Product product){
         favourites.add(product);
         product.getUsers().add(this);

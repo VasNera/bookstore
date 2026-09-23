@@ -58,6 +58,9 @@ public abstract class Product extends AbstractEntity{
     @ManyToMany(mappedBy = "favourites", fetch = FetchType.LAZY)
     private Set<User> users = new HashSet<>();
 
+    @OneToMany(mappedBy = "product")
+    private Set<CartItem> cartItems = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
