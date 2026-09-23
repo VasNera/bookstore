@@ -1,0 +1,2 @@
+ALTER TABLE toys
+ADD COLUMN age_range VARCHAR(50);
