@@ -61,6 +61,9 @@ public abstract class Product extends AbstractEntity{
     @OneToMany(mappedBy = "product")
     private Set<CartItem> cartItems = new HashSet<>();
 
+    @OneToMany(mappedBy = "product")
+    private Set<OrderItem> orderItems = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
