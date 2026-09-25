@@ -78,4 +78,14 @@ public class Order extends AbstractEntity {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private Set<OrderItem> orderItems = new HashSet<>();
 
+    public void addOrderItem(OrderItem orderItem){
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    public void removeOrderItem(OrderItem orderItem){
+        orderItems.remove(orderItem);
+        orderItem.setOrder(null);
+    }
+
 }
