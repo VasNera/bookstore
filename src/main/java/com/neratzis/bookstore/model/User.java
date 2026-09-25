@@ -59,6 +59,9 @@ public class User extends AbstractEntity {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Cart cart;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Review> reviews = new HashSet<>();
+
     public void addFavourite(Product product){
         favourites.add(product);
         product.getUsers().add(this);
