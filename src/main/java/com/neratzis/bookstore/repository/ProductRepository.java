@@ -5,11 +5,11 @@ import com.neratzis.bookstore.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
     Page<Product> findAllByDeletedFalse(Pageable pageable);
 
@@ -19,9 +19,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findAllByCategoryAndDeletedFalse(Category category, Pageable pageable);
 
-    Page<Product> findAllByPriceBetweenAndDeletedFalse(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
-
     Page<Product> findAllByFeaturedTrueAndDeletedFalse(Pageable pageable);
 
     Page<Product> findAllByDiscountPriceIsNotNullAndDeletedFalse(Pageable pageable);
+
+    boolean existsByCategoryAndDeletedFalse(Category category);
 }
