@@ -62,6 +62,7 @@ CONSTRAINT uk_capabilities_name UNIQUE(name)
    CONSTRAINT pk_users PRIMARY KEY (id),
 
     CONSTRAINT uk_users_uuid UNIQUE (uuid),
+    CONSTRAINT uk_users_email UNIQUE (email),
     CONSTRAINT uk_users_username UNIQUE (username),
 
     CONSTRAINT fk_users_role
@@ -69,7 +70,6 @@ CONSTRAINT uk_capabilities_name UNIQUE(name)
     REFERENCES roles(id)
     ON DELETE RESTRICT,
 
-    INDEX ix_users_username (username),
     INDEX ix_users_role_id (role_id),
     INDEX ix_users_deleted (deleted),
     INDEX ix_users_deleted_at (deleted_at)
@@ -105,8 +105,8 @@ CONSTRAINT uk_capabilities_name UNIQUE(name)
      sku VARCHAR(255) NOT NULL,
 
      dimensions VARCHAR(255),
-     price DECIMAL(19,2) NOT NULL,
-     discount_price DECIMAL(19,2),
+     price DECIMAL(10,2) NOT NULL,
+     discount_price DECIMAL(10,2),
      stock INT NOT NULL,
      image_url VARCHAR(500),
      featured TINYINT(1) NOT NULL DEFAULT 0,
@@ -141,7 +141,7 @@ CONSTRAINT uk_capabilities_name UNIQUE(name)
     CREATE TABLE books(
     id BIGINT NOT NULL,
     isbn VARCHAR(255) NOT NULL,
-    pages INT NOT NULL,
+    pages INT NULL,
     author VARCHAR(255),
     release_year INT,
     publisher VARCHAR(255),
