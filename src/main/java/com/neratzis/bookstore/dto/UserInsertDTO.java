@@ -4,6 +4,15 @@ public record UserInsertDTO(
 
         String username,
 
-        String password
+        String password,
+
+        String firstname,
+
+        String lastname,
+
+        String phone,
+
+        String email
+
 ) {
 }

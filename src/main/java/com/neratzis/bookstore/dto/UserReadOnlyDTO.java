@@ -8,6 +8,14 @@ public record UserReadOnlyDTO(
 
         String username,
 
+        String firstname,
+
+        String lastname,
+
+        String phone,
+
+        String email,
+
         String role
 
 ) {
