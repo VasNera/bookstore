@@ -14,9 +14,9 @@ public record ToyReadOnlyDTO(
 
         BigDecimal price,
 
-        String dimensions,
-
         BigDecimal discountPrice,
+
+        String dimensions,
 
         String ageRange,
 
@@ -28,5 +28,5 @@ public record ToyReadOnlyDTO(
 
         String categoryName
 
-) {
+) implements ProductDetailDTO{
 }

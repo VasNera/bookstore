@@ -29,5 +29,5 @@ public record MusicReadOnlyDTO(
         Availability availability
 
 
-) {
+) implements ProductDetailDTO{
 }

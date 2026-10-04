@@ -35,5 +35,5 @@ public record BookReadOnlyDTO(
         Integer releaseYear,
 
         String publisher
-) {
+) implements ProductDetailDTO {
 }

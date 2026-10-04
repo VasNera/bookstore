@@ -27,5 +27,5 @@ public record StationeryReadOnlyDTO(
         String description,
 
         String categoryName
-) {
+) implements ProductDetailDTO{
 }
