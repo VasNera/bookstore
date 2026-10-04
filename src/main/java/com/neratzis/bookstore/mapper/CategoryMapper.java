@@ -5,6 +5,7 @@ import com.neratzis.bookstore.dto.CategoryReadOnlyDTO;
 import com.neratzis.bookstore.model.Category;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -14,6 +15,7 @@ public class CategoryMapper {
 
         List<CategoryReadOnlyDTO> subCategories = category.getSubCategories()
                 .stream()
+                .sorted(Comparator.comparing(Category::getName))
                 .map(this::toCategoryDTO)
                 .toList();
 

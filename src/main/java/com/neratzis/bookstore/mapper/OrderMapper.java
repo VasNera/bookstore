@@ -11,6 +11,7 @@ import com.neratzis.bookstore.model.User;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -31,6 +32,7 @@ public class OrderMapper {
 
         List<OrderItemReadOnlyDTO> items = order.getOrderItems()
                 .stream()
+                .sorted(Comparator.comparing(OrderItem::getId))
                 .map(this::toOrderItemDTO)
                 .toList();
 

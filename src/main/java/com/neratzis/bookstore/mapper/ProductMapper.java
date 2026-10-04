@@ -175,6 +175,7 @@ public class ProductMapper {
         product.setSku(sku);
         product.setDescription(description);
         product.setPrice(price);
+        product.setDimensions(dimensions);
         product.setDiscountPrice(discountPrice);
         product.setStock(stock);
         product.setImageUrl(imageUrl);
