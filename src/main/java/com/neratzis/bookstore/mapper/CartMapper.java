@@ -7,10 +7,12 @@ import com.neratzis.bookstore.dto.CartReadOnlyDTO;
 import com.neratzis.bookstore.model.Cart;
 import com.neratzis.bookstore.model.CartItem;
 import com.neratzis.bookstore.model.Product;
+import com.neratzis.bookstore.service.ProductPriceCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -18,6 +20,7 @@ import java.util.List;
 public class CartMapper {
 
     private final ProductMapper productMapper;
+    private final ProductPriceCalculator productPriceCalculator;
 
     public CartItem mapToCartItemEntity(CartItemInsertDTO cartItemInsertDTO, Product product){
         CartItem cartItem = new CartItem();
@@ -28,32 +31,25 @@ public class CartMapper {
 
     }
 
-    public CartReadOnlyDTO toCartDTO(Cart cart){
+    public CartReadOnlyDTO toCartDTO(Cart cart) {
         List<CartItemReadOnlyDTO> items = cart.getCartItems()
                 .stream()
-                .map(cartItem -> {
-                    BigDecimal subtotal = cartItem.getProduct()
-                            .getPrice()
-                            .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
-                    return new CartItemReadOnlyDTO(
-                            cartItem.getId(),
-                            productMapper.toSummaryDTO(cartItem.getProduct()),
-                            cartItem.getQuantity(),
-                            subtotal
-                    );
-
-                })
+                .sorted(Comparator.comparing(CartItem::getId))
+                .map(cartItem -> new CartItemReadOnlyDTO(
+                        cartItem.getId(),
+                        productMapper.toSummaryDTO(cartItem.getProduct()),
+                        cartItem.getQuantity(),
+                        productPriceCalculator.lineTotal(cartItem.getProduct(), cartItem.getQuantity())
+                ))
                 .toList();
 
         BigDecimal totalAmount = items.stream()
-                .map(CartItemReadOnlyDTO :: subtotal)
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
+                .map(CartItemReadOnlyDTO::subtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return new CartReadOnlyDTO(
-                cart.getId(),
-                items,
-                totalAmount
-        );
+        return new CartReadOnlyDTO(cart.getId(), items, totalAmount);
     }
 
-}
+    }
+
+
