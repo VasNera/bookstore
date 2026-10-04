@@ -30,7 +30,7 @@ public ReviewReadOnlyDTO toReviewDTO(Review review) {
             review.getId(),
             review.getComment(),
             review.getRating(),
-            review.getUser().getUsername(),
+            review.getUser().getFirstname() + " " + review.getUser().getLastname().charAt(0) + ".",
             review.getCreatedAt(),
             review.getProduct().getTitle()
     );
