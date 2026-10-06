@@ -1,0 +1,16 @@
+package com.neratzis.bookstore.core.exceptions;
+
+import lombok.Getter;
+import org.springframework.validation.BindingResult;
+
+@Getter
+public class ValidationException extends AppGenericException{
+
+    private static final String DEFAULT_CODE = "_VALIDATION_ERROR";
+    private final BindingResult bindingResult;
+
+    public ValidationException(String code, String message, BindingResult bindingResult) {
+        super(code + DEFAULT_CODE, message);
+        this.bindingResult = bindingResult;
+    }
+}
