@@ -2,11 +2,13 @@ package com.neratzis.bookstore.mapper;
 
 import com.neratzis.bookstore.dto.CategoryInsertDTO;
 import com.neratzis.bookstore.dto.CategoryReadOnlyDTO;
+import com.neratzis.bookstore.dto.CategoryUpdateDTO;
 import com.neratzis.bookstore.model.Category;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
+
 
 @Component
 public class CategoryMapper {
@@ -34,5 +36,10 @@ public class CategoryMapper {
         category.setParentCategory(parent);
         return category;
 
+    }
+
+    public void updateCategoryFromDTO(Category category, CategoryUpdateDTO categoryUpdateDTO, Category parent){
+        category.setName(categoryUpdateDTO.name());
+        category.setParentCategory(parent);
     }
 }
