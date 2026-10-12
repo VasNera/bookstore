@@ -167,6 +167,44 @@ public class ProductMapper {
         return stationery;
     }
 
+    public void updateBookFromDTO(Book book, BookInsertDTO bookInsertDTO, Category category){
+        applyCommon(book, bookInsertDTO.title(), bookInsertDTO.sku(), bookInsertDTO.description(),
+                bookInsertDTO.price(),bookInsertDTO.discountPrice(), bookInsertDTO.dimensions(),
+                bookInsertDTO.stock(), bookInsertDTO.imageUrl(), bookInsertDTO.featured(), category);
+
+        book.setIsbn(bookInsertDTO.isbn());
+        book.setPages(bookInsertDTO.pages());
+        book.setAuthor(bookInsertDTO.author());
+        book.setReleaseYear(bookInsertDTO.releaseYear());
+        book.setPublisher(bookInsertDTO.publisher());
+    }
+
+    public void updateMusicFromDTO(Music music, MusicInsertDTO musicInsertDTO, Category category){
+        applyCommon(music, musicInsertDTO.title(),musicInsertDTO.sku(), musicInsertDTO.description(),
+                musicInsertDTO.price(),musicInsertDTO.discountPrice(),musicInsertDTO.dimensions(),
+                musicInsertDTO.stock(), musicInsertDTO.imageUrl(), musicInsertDTO.featured(),category);
+
+        music.setArtist(musicInsertDTO.artist());
+        music.setProductionCompany(musicInsertDTO.productionCompany());
+    }
+
+    public void updateToyFromDTO(Toy toy, ToyInsertDTO toyInsertDTO, Category category){
+        applyCommon(toy, toyInsertDTO.title(), toyInsertDTO.sku(), toyInsertDTO.description(),
+                toyInsertDTO.price(),toyInsertDTO.discountPrice(),toyInsertDTO.dimensions(),
+                toyInsertDTO.stock(), toyInsertDTO.imageUrl(), toyInsertDTO.featured(),category);
+
+        toy.setAgeRange(toyInsertDTO.ageRange());
+    }
+
+    public void updateStationeryFromDTO(Stationery stationery, StationeryInsertDTO stationeryInsertDTO,
+                                        Category category){
+        applyCommon(stationery, stationeryInsertDTO.title(), stationeryInsertDTO.sku(), stationeryInsertDTO.description(),
+                stationeryInsertDTO.price(),stationeryInsertDTO.discountPrice(),stationeryInsertDTO.dimensions(),
+                stationeryInsertDTO.stock(), stationeryInsertDTO.imageUrl(), stationeryInsertDTO.featured(),category);
+
+        stationery.setCompany(stationeryInsertDTO.company());
+    }
+
 
     private void applyCommon(Product product, String title, String sku, String description,
                              BigDecimal price, BigDecimal discountPrice, String dimensions,
