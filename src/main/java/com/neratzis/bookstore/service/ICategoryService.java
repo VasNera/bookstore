@@ -15,7 +15,7 @@ public interface ICategoryService {
             throws EntityAlreadyExistsException, EntityNotFoundException;
 
     CategoryReadOnlyDTO updateCategory(Long id, CategoryUpdateDTO categoryUpdateDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException;
+            throws EntityNotFoundException, EntityAlreadyExistsException, InvalidArgumentException;
 
     public void deleteCategory(Long id) throws EntityNotFoundException, InvalidArgumentException;
 

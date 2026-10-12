@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements ICategoryService{
     @Override
     @Transactional(rollbackFor = AppGenericException.class)
     public CategoryReadOnlyDTO updateCategory(Long id, CategoryUpdateDTO categoryUpdateDTO)
-            throws EntityNotFoundException, EntityAlreadyExistsException {
+            throws EntityNotFoundException, EntityAlreadyExistsException,InvalidArgumentException{
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("CATEGORY", "Category with id:"
@@ -69,6 +69,21 @@ public class CategoryServiceImpl implements ICategoryService{
             parent = categoryRepository.findById(categoryUpdateDTO.parentCategoryId())
                     .orElseThrow(() -> new EntityNotFoundException("CATEGORY", "Parent category with id: "
                             + categoryUpdateDTO.parentCategoryId() + " not found"));
+        }
+        if (parent != null) {
+            if (parent.getId().equals(category.getId())) {
+                throw new InvalidArgumentException("CATEGORY",
+                        "A category cannot be parent of itself");
+            }
+            Category ancestor = parent.getParentCategory();
+            while (ancestor != null) {
+                if (ancestor.getId().equals(category.getId())) {
+                    throw new InvalidArgumentException("CATEGORY",
+                            "A category cannot be moved under its own descendant");
+                }
+                ancestor = ancestor.getParentCategory();
+            }
+
         }
 
             categoryMapper.updateCategoryFromDTO(category, categoryUpdateDTO, parent);
