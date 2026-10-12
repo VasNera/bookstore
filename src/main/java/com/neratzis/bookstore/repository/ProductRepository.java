@@ -15,6 +15,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     Optional<Product> findBySkuAndDeletedFalse(String sku);
 
+    Optional<Product> findByIdAndDeletedFalse(Long id);
+
     Page<Product> findByTitleContainingIgnoreCaseAndDeletedFalse(String title, Pageable pageable);
 
     Page<Product> findAllByCategoryAndDeletedFalse(Category category, Pageable pageable);
