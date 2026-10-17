@@ -6,6 +6,7 @@ import com.neratzis.bookstore.dto.ErrorResponseDTO;
 import com.neratzis.bookstore.dto.ValidationResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -85,6 +86,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             case CredentialsExpiredException ex -> "CREDENTIALS_EXPIRED";
             default -> "AUTHENTICATION_ERROR";
         };
+
+
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponseDTO(errorCode,e.getMessage()));
@@ -113,9 +116,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDataIntegrity(DataIntegrityViolationException e) {
+        log.warn("Data integrity violation: {}", e.getMostSpecificCause().getMessage());
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ErrorResponseDTO("DATA_CONFLICT", "The data conflicts with an existing record."));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnexpected(Exception e) {
+        log.error("Unexpected error", e);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponseDTO("INTERNAL_SERVER_ERROR", "An unexpected error occurred."));
+    }
+
     @ExceptionHandler(AppGenericException.class)
     public ResponseEntity<ErrorResponseDTO> handleGenericException(AppGenericException e){
-        log.warn("Unexpected Error. Message={}",e.getMessage());
+        log.error("Unexpected Error. Message={}",e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponseDTO("INTERNAL_SERVER_ERROR", "An unexpected error occurred."));
