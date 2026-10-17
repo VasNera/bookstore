@@ -155,7 +155,12 @@ public class OrderServiceImpl implements IOrderService{
                 orderItem -> orderItem.getProduct().setStock(orderItem.getProduct()
                         .getStock() + orderItem.getQuantity()));
 
+        if (order.getPaymentStatus() == PaymentStatus.PAID) {
+            order.setPaymentStatus(PaymentStatus.REFUNDED);
+        }
+
         order.setOrderStatus(OrderStatus.CANCELLED);
+        log.info("Order={} cancelled by user={}, stock restored", orderNumber, username);
         return orderMapper.toReadOnlyDTO(order);
     }
 
