@@ -9,8 +9,6 @@ public record AuthRequestDTO (
         String username,
 
         @NotBlank(message = "{password.notBlank}")
-        @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])^.{8,}$",
-                message = "{password.pattern.invalid}")
         String password
 
 ){
