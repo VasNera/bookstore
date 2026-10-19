@@ -17,7 +17,7 @@ public interface IUserService {
     UserReadOnlyDTO createUser(UserInsertDTO userInsertDTO, String roleName)
             throws EntityAlreadyExistsException;
 
-    UserReadOnlyDTO updateUser(UserUpdateDTO updateDTO,String username)
+    UserReadOnlyDTO updateUser(String username, UserUpdateDTO updateDTO)
         throws EntityNotFoundException,EntityAlreadyExistsException;
 
     UserReadOnlyDTO getUserByUUID(UUID uuid) throws EntityNotFoundException;

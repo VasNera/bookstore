@@ -83,7 +83,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional(rollbackFor = AppGenericException.class)
-    public UserReadOnlyDTO updateUser(UserUpdateDTO updateDTO, String username)
+    public UserReadOnlyDTO updateUser(String username,UserUpdateDTO updateDTO)
             throws EntityNotFoundException, EntityAlreadyExistsException {
         User user = userRepository.findByUsernameAndDeletedFalse(username)
                 .orElseThrow(() -> new EntityNotFoundException("USER", "User with username: "
