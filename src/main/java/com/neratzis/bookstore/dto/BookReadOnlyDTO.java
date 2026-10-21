@@ -14,6 +14,8 @@ public record BookReadOnlyDTO(
 
         String dimensions,
 
+        Integer stock,
+
         BigDecimal price,
 
         BigDecimal discountPrice,
