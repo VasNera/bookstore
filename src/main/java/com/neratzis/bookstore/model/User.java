@@ -64,12 +64,12 @@ public class User extends AbstractEntity implements UserDetails {
 
     public void addFavourite(Product product){
         favourites.add(product);
-        product.getUsers().add(this);
+
     }
 
     public void removeFavourite(Product product){
         favourites.remove(product);
-        product.getUsers().remove(this);
+
     }
 
 
