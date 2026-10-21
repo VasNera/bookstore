@@ -18,6 +18,8 @@ public record ToyReadOnlyDTO(
 
         String dimensions,
 
+        Integer stock,
+
         String ageRange,
 
         Availability availability,

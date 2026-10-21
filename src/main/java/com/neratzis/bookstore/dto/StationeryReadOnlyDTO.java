@@ -18,6 +18,8 @@ public record StationeryReadOnlyDTO(
 
         String dimensions,
 
+        Integer stock,
+
         Availability availability,
 
         String company,

@@ -20,6 +20,8 @@ public record MusicReadOnlyDTO(
 
         BigDecimal discountPrice,
 
+        Integer stock,
+
         String imageUrl,
 
         String description,
