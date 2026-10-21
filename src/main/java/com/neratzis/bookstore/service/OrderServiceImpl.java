@@ -164,6 +164,38 @@ public class OrderServiceImpl implements IOrderService{
         return orderMapper.toReadOnlyDTO(order);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public OrderReadOnlyDTO getOrderByNumberAsAdmin(String orderNumber) throws EntityNotFoundException {
+        return orderMapper.toReadOnlyDTO(findOrder(orderNumber));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrderSummaryDTO> getAllOrders(OrderStatus status, Pageable pageable) {
+        Page<Order> orders = (status == null)
+                ? orderRepository.findAllByOrderByCreatedAtDesc(pageable)
+                : orderRepository.findByOrderStatusOrderByCreatedAtDesc(status, pageable);
+        return orders.map(orderMapper::toSummaryDTO);
+    }
+
+    @Override
+    @Transactional(rollbackFor = AppGenericException.class)
+    public OrderReadOnlyDTO updatePaymentStatus(String orderNumber, PaymentStatus newStatus)
+            throws EntityNotFoundException, InvalidArgumentException {
+
+        Order order = findOrder(orderNumber);
+
+        if (order.getOrderStatus() == OrderStatus.CANCELLED) {
+            throw new InvalidArgumentException("ORDER", "Cannot change payment of a cancelled order");
+        }
+        validatePaymentTransition(order.getPaymentStatus(), newStatus);
+
+        order.setPaymentStatus(newStatus);
+        log.info("Order ={} payment status changed to ={}", orderNumber, newStatus);
+        return orderMapper.toReadOnlyDTO(order);
+    }
+
     //Helpers
 
     private Order findOrder(String orderNumber) throws EntityNotFoundException{
@@ -202,6 +234,18 @@ public class OrderServiceImpl implements IOrderService{
         };
         if (!allowed){ throw new InvalidArgumentException("ORDER", "Order can't deliver");
         }
+    }
 
+    private void validatePaymentTransition(PaymentStatus current, PaymentStatus next)
+            throws InvalidArgumentException {
+        boolean allowed = switch (current) {
+            case PENDING -> next == PaymentStatus.PAID || next == PaymentStatus.FAILED;
+            case PAID -> next == PaymentStatus.REFUNDED;
+            case FAILED, REFUNDED -> false;
+        };
+        if (!allowed) {
+            throw new InvalidArgumentException("ORDER",
+                    "Payment status cannot change from " + current + " to " + next);
+        }
     }
 }
