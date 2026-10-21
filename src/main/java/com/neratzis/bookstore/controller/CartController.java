@@ -4,18 +4,21 @@ import com.neratzis.bookstore.core.exceptions.EntityNotFoundException;
 import com.neratzis.bookstore.core.exceptions.InvalidArgumentException;
 import com.neratzis.bookstore.core.exceptions.ValidationException;
 import com.neratzis.bookstore.dto.CartItemInsertDTO;
+import com.neratzis.bookstore.dto.CartItemUpdateDTO;
 import com.neratzis.bookstore.dto.CartReadOnlyDTO;
 import com.neratzis.bookstore.service.ICartService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/cart")
+@PreAuthorize("hasAuthority('MANAGE_OWN_CART')")
 @RequiredArgsConstructor
 public class CartController {
 
@@ -45,14 +48,14 @@ public class CartController {
             Authentication authentication,
             @PathVariable long productId,
             @Valid @RequestBody
-            CartItemInsertDTO insertDTO,
+            CartItemUpdateDTO updateDTO,
             BindingResult bindingResult
     ) throws ValidationException,EntityNotFoundException,InvalidArgumentException{
         if (bindingResult.hasErrors()){
             throw new ValidationException("CART", "Invalid quantity", bindingResult);
         }
         return new ResponseEntity<>(cartService.updateItemQuantity(authentication.getName(),
-                productId,insertDTO.quantity()),HttpStatus.OK);
+                productId,updateDTO.quantity()),HttpStatus.OK);
     }
 
     @DeleteMapping("/items/{productId}")

@@ -10,11 +10,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/admin")
+@PreAuthorize("hasAuthority('MANAGE_PRODUCTS')")
 @RequiredArgsConstructor
 public class AdminProductController {
 
@@ -136,7 +138,7 @@ public class AdminProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("products/{id}/featured")
+    @PatchMapping("/products/{id}/featured")
     public ResponseEntity<Void> toggleFeatured(@PathVariable long id)throws EntityNotFoundException{
         productService.toggleFeatured(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

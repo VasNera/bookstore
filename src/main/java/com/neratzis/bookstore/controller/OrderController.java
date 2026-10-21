@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class OrderController {
     private final IOrderService orderService;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_ORDER')")
     public ResponseEntity<OrderReadOnlyDTO> checkout(
             Authentication authentication,
             @Valid @RequestBody
@@ -39,6 +41,7 @@ public class OrderController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('VIEW_OWN_ORDERS')")
     public ResponseEntity<Page<OrderSummaryDTO>> getMyOrders(
             Authentication authentication,
             @PageableDefault(size = 10)Pageable pageable){
@@ -46,14 +49,18 @@ public class OrderController {
     }
 
     @GetMapping("/{orderNumber}")
+    @PreAuthorize("hasAuthority('VIEW_OWN_ORDERS')")
     public ResponseEntity<OrderReadOnlyDTO> getOrderByNumber(Authentication authentication
             ,@PathVariable String orderNumber)throws EntityNotFoundException,InvalidArgumentException{
         return new ResponseEntity<>(orderService.getOrderByNumber(authentication.getName(), orderNumber),HttpStatus.OK);
     }
 
     @PatchMapping("/{orderNumber}/cancel")
+    @PreAuthorize("hasAuthority('CANCEL_OWN_ORDERS')")
     public ResponseEntity<OrderReadOnlyDTO> cancelOrder(Authentication authentication
             ,@PathVariable String orderNumber)throws EntityNotFoundException, InvalidArgumentException{
         return new ResponseEntity<>(orderService.cancelOrder(authentication.getName(),orderNumber ),HttpStatus.OK);
     }
+
+
 }

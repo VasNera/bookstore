@@ -14,18 +14,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/reviews")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class ReviewController {
 
     private final IReviewService reviewService;
 
     @PostMapping("/products/{productId}/reviews")
+    @PreAuthorize("hasAuthority('CREATE_REVIEW')")
     public ResponseEntity<ReviewReadOnlyDTO> createReview(
             Authentication authentication, @PathVariable long productId,
             @Valid @RequestBody
@@ -51,12 +53,13 @@ public class ReviewController {
         return new ResponseEntity<>(reviewService.getAverageRating(productId),HttpStatus.OK);
     }
 
-    @GetMapping("/latest")
+    @GetMapping("/reviews/latest")
     public ResponseEntity<Page<ReviewReadOnlyDTO>> getLatestReviews(@PageableDefault(size = 5)Pageable pageable) {
         return new ResponseEntity<>(reviewService.getLatestReviews(pageable),HttpStatus.OK);
     }
 
-    @DeleteMapping("/{reviewId}")
+    @DeleteMapping("/reviews/{reviewId}")
+    @PreAuthorize("hasAuthority('MANAGE_OWN_REVIEWS')")
     public ResponseEntity<Void> deleteReview(
             Authentication authentication, @PathVariable long reviewId)
             throws EntityNotFoundException, InvalidArgumentException {
