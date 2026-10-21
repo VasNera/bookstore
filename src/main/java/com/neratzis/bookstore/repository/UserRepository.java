@@ -24,4 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailAndDeletedFalse(String email);
 
+    @EntityGraph(attributePaths = "favourites")
+    Optional<User> findWithFavouritesByUsernameAndDeletedFalse(String username);
+
 }
