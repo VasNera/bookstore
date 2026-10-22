@@ -79,7 +79,44 @@ Over 100 automated tests, run on every push by GitHub Actions.
 ./mvnw test        # needs Docker for the integration tests
 ```
 
-## Run locally
+## Build & Deploy
+
+There are two ways to run the application: **with Docker Compose**, which brings up the database and the API together with a single command, or **locally**, against your own MySQL installation.
+
+### Option A — Docker Compose (recommended)
+
+Requires only **Docker Desktop** — no Java or MySQL installation needed.
+
+```bash
+git clone https://github.com/VasNera/bookstore.git
+cd bookstore
+cp .env.example .env
+docker compose up --build
+```
+
+`.env.example` ships with working development values, so the copy above is enough to start the application. Open `.env` only if you want your own passwords or a different port.
+
+`docker compose up` performs the whole build and deployment:
+
+1. **Builds the application image** from the [`Dockerfile`](Dockerfile) — a multi-stage build that compiles the project with the Maven wrapper on `eclipse-temurin:21-jdk` and copies only the resulting jar into a slim `eclipse-temurin:21-jre` image, running as a non-root user.
+2. **Starts MySQL 8.4** with a named volume (`mysql-data`), so the database survives restarts, and waits for its healthcheck before starting the API.
+3. **Runs the Flyway migrations** on the first start, creating the schema and seeding the roles and capabilities.
+4. **Creates the admin account** (development profile) with the password from `ADMIN_PASSWORD`.
+
+| Service | URL |
+|---|---|
+| REST API | `http://localhost:8080/api/v1` |
+| Swagger UI | `http://localhost:8080/swagger-ui.html` |
+| MySQL | `localhost:3308` (mapped from 3306 inside the container, to avoid clashing with a local MySQL) |
+
+If port 8080 is already in use, set `APP_PORT` in `.env`.
+
+```bash
+docker compose down       # stop, keep the database
+docker compose down -v    # stop and delete the database volume
+```
+
+### Option B — Run locally
 
 Requires **Java 21** and **MySQL 8**. The Maven wrapper is included.
 
@@ -117,12 +154,12 @@ Flyway creates the schema and seeds the roles and capabilities on the first star
 
 | Role | Username | Password |
 |---|---|---|
-| Admin | `admin` | the value of `admin.password` you chose above |
+| Admin | `admin` | `ADMIN_PASSWORD` from `.env` (Docker) or `admin.password` from your secret file (local) |
 | Customer | register through `POST /auth/register` | your own |
 
 ### Configuration through environment variables
 
-Every setting can also be supplied as an environment variable, which is how the CI pipeline runs the tests:
+Configuration is fully externalised: every setting can be supplied as an environment variable, which is how the Docker image and the CI pipeline are configured and how the application would be deployed to a host such as Railway or Render.
 
 | Variable | Default | Purpose |
 |---|---|---|
@@ -130,10 +167,11 @@ Every setting can also be supplied as an environment variable, which is how the 
 | `MYSQL_USER` | `bookstoreUser` | database user |
 | `MYSQL_PASSWORD` | — | database password (**required**) |
 | `JWT_SECRET_KEY` | — | Base64 JWT signing key (**required**) |
+| `ADMIN_PASSWORD` | — | password of the seeded `admin` account (**required** in the development profile) |
+| `SPRING_DATASOURCE_URL` | — | overrides the whole JDBC URL, if needed |
 
 ## Roadmap
 
-- Docker Compose (database and API with one command)
 - React frontend in its own repository
 - Product image upload
 - Real payment provider (payments are mocked today)

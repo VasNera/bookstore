@@ -1,0 +1,43 @@
+# Runs the whole backend — Spring Boot app + MySQL — with one command:
+#   docker compose up --build
+# Settings are read from a local .env file (git-ignored) next to this file.
+# Copy .env.example to .env first.
+
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: bookstore
+      MYSQL_USER: bookstoreUser
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - "3308:3306"          # host 3308 → avoids clashing with a local MySQL on 3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:             # the app waits until MySQL is actually ready (TCP check: during first-run init MySQL only listens on its socket)
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  app:
+    build: .                 # build the Dockerfile in this folder
+    restart: on-failure      # MySQL's first-run init can lag its healthcheck — retry
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # Point the datasource at the mysql container over the docker network
+      # (no TLS between containers → useSSL=false).
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bookstore?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      MYSQL_USER: bookstoreUser
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    ports:
+      - "${APP_PORT:-8080}:8080"
+
+volumes:
+  mysql-data:                # named volume → the DB survives container restarts

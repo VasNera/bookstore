@@ -1,0 +1,9 @@
+# Keep the build context small & the image clean — never copy these in.
+target/
+.idea/
+*.iml
+.git/
+.github/
+.env
+src/main/resources/application-secret.properties
+uploads/
