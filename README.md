@@ -70,7 +70,7 @@ Interactive documentation: **`http://localhost:8080/swagger-ui.html`** — log i
 
 ## Tests
 
-Over 100 automated tests, run on every push by GitHub Actions.
+Automated unit and integration tests, run on every push by GitHub Actions.
 
 - **Unit tests (Mockito, no database)**: checkout (stock, price snapshots, totals, invoice validation, every failure path), cancellation and refunds, ownership checks, cart rules, reviews, favourites, price calculation and both status state machines.
 - **Integration tests with Testcontainers**: the whole application runs against a real **MySQL 8.4 container**; Flyway builds the schema from scratch on every run, which proves the migrations and the entity mapping agree. Covered: migrations, authentication, authorization (401 / 403, capability removal taking effect at once), catalogue and filters, cart.
