@@ -58,6 +58,7 @@ public class CartServiceImpl implements ICartService{
             existing.get().setQuantity(newQuantity);
         } else {
             cart.addCartItem(cartMapper.mapToCartItemEntity(cartItemInsertDTO, product));
+            cartRepository.flush();
         }
 
         log.info("Product with sku={} added to cart of user={}", product.getSku(), username);

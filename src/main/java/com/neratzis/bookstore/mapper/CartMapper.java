@@ -34,7 +34,7 @@ public class CartMapper {
     public CartReadOnlyDTO toCartDTO(Cart cart) {
         List<CartItemReadOnlyDTO> items = cart.getCartItems()
                 .stream()
-                .sorted(Comparator.comparing(CartItem::getId))
+                .sorted(Comparator.comparing(CartItem::getId, Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(cartItem -> new CartItemReadOnlyDTO(
                         cartItem.getId(),
                         productMapper.toSummaryDTO(cartItem.getProduct()),

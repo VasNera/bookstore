@@ -76,6 +76,20 @@ class CartServiceImplTest {
     }
 
     @Test
+    void add_aSecondDifferentProduct_worksEvenThoughTheNewLineHasNoIdYet() throws Exception {
+        // regression: the new line has no id until the flush, and sorting the lines by id used to throw an NPE
+        Product first = productInCatalogue(1, "10.00", null, 5);
+        Product second = productInCatalogue(2, "12.00", null, 5);
+        cart.addCartItem(cartItem(1, first, 1));
+
+        CartReadOnlyDTO dto = cartService.addItemToCart("maria", new CartItemInsertDTO(2L, 1));
+
+        assertThat(dto.items()).hasSize(2);
+        assertThat(dto.totalAmount()).isEqualByComparingTo("22.00");
+        assertThat(quantityOf(second).getQuantity()).isEqualTo(1);
+    }
+
+    @Test
     void add_theSameProductAgain_increasesTheQuantity_insteadOfAddingALine() throws Exception {
         Product product = productInCatalogue(1, "10.00", null, 10);
         cart.addCartItem(cartItem(1, product, 2));
